@@ -40,7 +40,7 @@ ping_list() {
 stop_clean() {
         read -p "Press [ENTER] to stop ping processes and clean output files...."
         echo
-        killall ping
+        killall ping > /dev/null 2>&1
         shopt -s nullglob
         for FILE in $PREFIX*; do
         sed -i '1d' $FILE
