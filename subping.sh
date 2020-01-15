@@ -55,6 +55,15 @@ stop_clean() {
         done
 }
 
+plot() {
+	shopt -s nullglob
+	for FILE in $PREFIX*; do
+		BASENAME=${FILE%.txt}
+		awk '{print $4",",substr($13,6)}' $FILE > $BASENAME-times.txt
+		gnuplot -e "set xdata time; set timefmt '%H:%M:%S'; set term png; set term png size 2048,786; set xtics rotate; set xtics 60; plot '$BASENAME-times.txt' using 1:2 with lines" > $BASENAME.png
+	done
+}
+
 #Main
 clear
 if [ "$1" = "" ]; then
@@ -63,6 +72,9 @@ if [ "$1" = "" ]; then
         exit 1
 fi
 pre_clean
-ip_list
-ping_list
-stop_clean
+#ip_list
+#ping_list
+#stop_clean
+read
+cp ~/scripts/warehouse/voice/1-13-2020/backup/10*.txt ~/scripts/warehouse/voice/1-13-2020
+plot
