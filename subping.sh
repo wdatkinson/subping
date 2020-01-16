@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###########################################################
-# subping.sh - Subnet Ping Utility - v1.4 - Bill Atkinson #
+# subping.sh - Subnet Ping Utility - v1.6 - Bill Atkinson #
 ###########################################################
 
 #Global Variables
@@ -56,12 +56,19 @@ stop_clean() {
 }
 
 plot() {
-	shopt -s nullglob
-	for FILE in $PREFIX*; do
-		BASENAME=${FILE%.txt}
-		awk '{print $4",",substr($13,6)}' $FILE > $BASENAME-times.txt
-		gnuplot -e "set xdata time; set timefmt '%H:%M:%S'; set term png; set term png size 2048,786; set xtics rotate; set xtics 60; plot '$BASENAME-times.txt' using 1:2 with lines" > $BASENAME.png
-	done
+	if command -v gnuplot > /dev/null 2>&1; then
+		shopt -s nullglob
+		for FILE in $PREFIX*; do
+			BASENAME=${FILE%.txt}
+			awk '{print $4",",substr($13,6)}' $FILE > $BASENAME-times.txt
+			gnuplot -e "set xdata time; set timefmt '%H:%M:%S'; set term png; set term png size 2048,786; set xtics rotate; set xtics 60; plot '$BASENAME-times.txt' using 1:2 with lines" > $BASENAME.png
+		echo "GNUPlot run complete."
+		echo
+		done
+	else
+		echo "GNUPlot not installed.  No graphing possible."
+		echo
+	if
 }
 
 #Main
@@ -72,9 +79,7 @@ if [ "$1" = "" ]; then
         exit 1
 fi
 pre_clean
-#ip_list
-#ping_list
-#stop_clean
-read
-cp ~/scripts/warehouse/voice/1-13-2020/backup/10*.txt ~/scripts/warehouse/voice/1-13-2020
+ip_list
+ping_list
+stop_clean
 plot
