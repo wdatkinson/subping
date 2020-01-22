@@ -7,7 +7,7 @@ If the script is run without any arguments, it will display a usage message.  A 
 
 When given a subnet with which to work, the following actions are taken in this order:
 
-1). The current directory is examined for left overs from a previous run and if found they are deleted.
+1). Starting with v1.7, the base output directory is now ~/subping and an individual run directory is created under the base output directory for each run.  The name of the run directory is based upon the date and time the script is run.  For example: ~/subping/01222020_0738, which indicates a run on January 22nd, 2020 at 07:38.  In the interest of examining runs over time or extended troubleshooting efforts, the script no longer cleans up pprevious runs.  Those are the responsibility of the user.
 
 2). The script will take the subnet provided on the command line and initiate a single ping to IP's .2-.254 (last octet).  IP's that return the ping will be stored in a file (ip_list.txt) and the script will report back via STDOUT that number for visual reference.
 

@@ -1,37 +1,46 @@
 #!/bin/bash
 
 ###########################################################
-# subping.sh - Subnet Ping Utility - v1.6 - Bill Atkinson #
+# subping.sh - Subnet Ping Utility - v1.7 - Bill Atkinson #
 ###########################################################
 
 #Global Variables
 PREFIX=$1
 CURRDIR=$(pwd)
+OUTDIR=$(date +%m%d%Y_%H%M)
+BASEDIR=~/subping
+OUTPATH=$BASEDIR/$OUTDIR
 
 #Functions
-pre_clean() {
-        if [ -f "$CURRDIR/ip_list.txt" ]; then
-                rm -fr $CURRDIR/ip_list.txt
-        fi
+outpath() {
+	if [ ! -d "$BASEDIR" ]; then
+		mkdir $BASEDIR
+		echo "Created base output directory: $BASEDIR"
+		echo		
+	fi
+	
+	if [ ! -d "$OUTPATH" ]; then
+		mkdir $OUTPATH
+		echo "Created output directory for this run: $OUTPATH"
+		echo
+	fi
 
-        if [ ! -f "$CURRDIR/$PREFIX*" ]; then
-                rm -fr $CURRDIR/$PREFIX*
-        fi
+	cd $OUTPATH
 }
 
 ip_list() {
         for LAST_OCTET in {2..254}; do
-                ping -c 1 $PREFIX.$LAST_OCTET | grep "64 bytes" | awk ' { print $4 } ' | tr -d ":" >> $CURRDIR/ip_list.txt &
+                ping -c 1 $PREFIX.$LAST_OCTET | grep "64 bytes" | awk ' { print $4 } ' | tr -d ":" >> $OUTPATH/ip_list.txt &
         done
-        FOUND_IPS=$(wc -l < $CURRDIR/ip_list.txt)
+        FOUND_IPS=$(wc -l < $OUTPATH/ip_list.txt)
         echo "Found $FOUND_IPS IP's."
         echo
 
 }
 
 ping_list() {
-        for IP in $(cat $CURRDIR/ip_list.txt); do
-                ping $IP | while read PONG; do echo "$(date): $PONG" >> $CURRDIR/$IP.txt; done &
+        for IP in $(cat $OUTPATH/ip_list.txt); do
+                ping $IP | while read PONG; do echo "$(date): $PONG" >> $OUTPATH/$IP.txt; done &
         done
         echo Spawning ping processes for each IP.
         echo
@@ -62,13 +71,13 @@ plot() {
 			BASENAME=${FILE%.txt}
 			awk '{print $4",",substr($13,6)}' $FILE > $BASENAME-times.txt
 			gnuplot -e "set xdata time; set timefmt '%H:%M:%S'; set term png; set term png size 2048,786; set xtics rotate; set xtics 60; plot '$BASENAME-times.txt' using 1:2 with lines" > $BASENAME.png
+		done
 		echo "GNUPlot run complete."
 		echo
-		done
 	else
 		echo "GNUPlot not installed.  No graphing possible."
 		echo
-	if
+	fi	
 }
 
 #Main
@@ -78,7 +87,7 @@ if [ "$1" = "" ]; then
         echo
         exit 1
 fi
-pre_clean
+outpath
 ip_list
 ping_list
 stop_clean
