@@ -1,0 +1,80 @@
+#!/bin/bash
+
+#######################################################
+# singleping - IP Ping Utility - v1.0 - Bill Atkinson #
+#######################################################
+
+#Global Variables
+IP=$1
+OUTDIR=$(date +%m%d%Y_%H%M)
+BASEDIR=~/singleping
+OUTPATH=$BASEDIR/$OUTDIR
+
+#Functions
+title() {
+	echo "#########################################################"
+	echo "#	 					        #"
+	echo "#  singleping - IP Ping Utility - v1.0 - Bill Atkinson  #"
+	echo "#                                                       #"
+	echo "#########################################################"
+	echo
+}
+outpath() {
+	if [ ! -d "$BASEDIR" ]; then
+		mkdir $BASEDIR
+		echo "Created base output directory: $BASEDIR"
+		echo		
+	fi
+	
+	if [ ! -d "$OUTPATH" ]; then
+		mkdir $OUTPATH
+		echo "Created output directory for this run: $OUTPATH"
+		echo
+	fi
+
+	cd $OUTPATH
+}
+
+ping_ip() {
+        ping $IP | while read PONG; do echo "$(date): $PONG" >> $OUTPATH/$IP.txt; done &
+        echo "Spawning ping process for IP $IP."
+        echo
+}
+
+stop_clean() {
+        read -p "Press [ENTER] to stop ping process and clean output file...."
+        echo
+        killall ping > /dev/null 2>&1
+        sed -i '1d' $IP.txt
+        tac "$IP.txt" > "${IP}".tmp
+        sed -i "1,4d" "${IP}".tmp
+        tac "${IP}".tmp > "$IP.txt"
+        rm -fr "${IP}".tmp
+}
+
+plot() {
+	if command -v gnuplot > /dev/null 2>&1; then
+		BASENAME=${IP%.txt}
+		awk '{print $4",",substr($13,6)}' $IP.txt > $BASENAME-times.txt
+		gnuplot -e "set xdata time; set timefmt '%H:%M:%S'; set term png; set term png size 2048,786; set xtics rotate; set xtics 60; plot '$BASENAME-times.txt' using 1:2 with lines" > $BASENAME.png
+		echo "GNUPlot run complete."
+		echo
+	else
+		echo "GNUPlot not installed.  No graphing possible."
+		echo
+	fi	
+}
+
+#Main
+clear
+title
+if [ "$1" = "" ]; then
+echo "Usage: singleping [X.X.X.X] where X.X.X.X is the IP to ping."
+	echo "Example: ./singleping 192.168.1.5"
+        echo
+        exit 1
+fi
+outpath
+ping_ip
+stop_clean
+plot
