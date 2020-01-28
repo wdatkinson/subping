@@ -28,4 +28,8 @@ IP_ADDR.png - The gnuplot output file.  This will be the graph of the data from 
 
 As noted in step 1, upon subsequent runs of the script all output files are wiped, so if you want to keep the files from each run, you must manually move them to another location BEFORE running the script again.  Currently there is no warning or prompt prior to the clean-up process.  Perhaps that can be added in the future.
 
-I wrote the script to assist with some troubleshooting at my place of employment.  It is posted here for reference by others as they, like me, look to improve their bash scripting skills.  Feedback is welcome as well as suggestions for future improvements.
+As I used the subping utility to troubleshoot, it became readily apparent that the need existing to be able to ping a single IP.  So I took the subping code and trimmed it down to work with a single IP.  Running the script from the command line will give you a message with the syntax required.
+
+Lastly, the need arose to be able to schedule the singleping script for a given launch time outside of business hours.  That, or I needed to be online to kick off the process.  I didn't want to jack around with cron for one-off runs, so I wrote the launcher script, which will take the IP, date and time and utilizing EPOCH time, launch the singleping script with the IP passed at the desired date/time.  Once again, syntax can be obtained by running the script from the command line.
+
+I wrote these scripts to assist with some troubleshooting at my place of employment.  It is posted here for reference by others as they, like me, look to improve their bash scripting skills.  Feedback is welcome as well as suggestions for future improvements.

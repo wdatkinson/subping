@@ -12,7 +12,7 @@ NAP_LENGTH=$(( $TARGET_EPOCH - $CURRENT_EPOCH ))
 
 title() {
 	echo "###################################################################"
-	echo "#                                                            #"
+	echo "#                                                                 #"
 	echo "#  launcher - singleping Schedule Utility - v1.0 - Bill Atkinson  #"
 	echo "#                                                                 #"
 	echo "###################################################################"
@@ -39,19 +39,24 @@ singleping $TARGET_IP
 #Main
 clear
 title
+
 if [ "$1" = "" ]; then
         echo "You did not specify an IP address.  Usage: launcher [IP] [DATE] [TIME] where IP is the IP to ping in X.X.X.X format, DATE is the target date in XX/XX/XXXX format and TIME is the time to execute in XX:XX format. Example: launcher 192.168.1.1 01/01/2020 06:00"
         echo
         exit 1
+fi
+
 if [ "$2" = "" ]; then
-        echo "You did not specify a start date.  Usage: launcher [IP] [DATE] [TIME] where IP is the IP to ping in X.X.X.X format, DATE is the target date in XX/XX/XXXX format and TIME is the time to execute in XX:XX
- format. Example: launcher 192.168.1.1 01/01/2020 06:00"
+        echo "You did not specify a start date.  Usage: launcher [IP] [DATE] [TIME] where IP is the IP to ping in X.X.X.X format, DATE is the target date in XX/XX/XXXX format and TIME is the time to execute in XX:XX format. Example: launcher 192.168.1.1 01/01/2020 06:00"
         echo
         exit 1
+fi
+
 if [ "$3" = "" ]; then
-        echo "You did not specify a start time.  Usage: launcher [IP] [DATE] [TIME] where IP is the IP to ping in X.X.X.X format, DATE is the target date in XX/XX/XXXX format and TIME is the time to execute in XX:XX
- format. Example: launcher 192.168.1.1 01/01/2020 06:00"
+        echo "You did not specify a start time.  Usage: launcher [IP] [DATE] [TIME] where IP is the IP to ping in X.X.X.X format, DATE is the target date in XX/XX/XXXX format and TIME is the time to execute in XX:XX format. Example: launcher 192.168.1.1 01/01/2020 06:00"
         echo
         exit 1
+fi
+
 display_parms
 sleep_launch
